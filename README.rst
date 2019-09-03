@@ -23,10 +23,52 @@ CFN Macro VPC
 * Documentation: https://cfn-macro-vpc.readthedocs.io.
 
 
-Features
---------
+How-to
+-------
 
-* TODO
+.. code-block:: yaml
+
+   Parameters:
+     VpcCidr:
+       Type: String
+   Transform:
+     - cfnmacro-vpc
+       Properties:
+         CidrBlock: !Ref VpcCidr
+	 EnableDnsHostnames: True
+	 Tags:
+	   - KeyName: Name
+	     Value: !Ref AWS::Stackname
+       VpcSettings:
+         AvailabilityZones:
+	   Fn::GetAZs !Ref 'AWS::Region'
+         PublicVpc: True
+	 UseCloudMap: True
+	 DhcpOptions: # DHCP Options as according to `DHCP Options Doc`_
+	   DomainName: !Sub '${AWS::StackName}.local'
+       SubnetsLayers:
+         - Name: Public
+	   Properties:
+	     PublicIngress: True
+	     PublicEgress: True
+	     AvailabilityZones:
+	       Fn::GetAzs !Ref AWS::Region
+	     OnePerAzOnly: True
+	 - Name: Application
+	   Properties:
+	     PublicIngress: False
+	     PublicEgress: True
+	     AvailabilityZones:
+	       Fn::GetAzs !Ref AWS::Region
+	     OnePerAzOnly: False
+	 - Name: Storage
+	   Properties:
+	     PublicEgress: False
+	     PublicIngress: False
+	     AvailabilityZones:
+	       Fn::GetAZs !Ref AWS::Region
+	     OnePerAzOnly: True
+
 
 Credits
 -------
@@ -35,3 +77,5 @@ This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypack
 
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter
 .. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+
+.. _`DHCP Options Doc`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-dhcp-options.html

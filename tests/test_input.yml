@@ -1,0 +1,43 @@
+Properties:
+  CidrBlock: 10.0.0.0/22
+  EnableDnsHostnames: True
+  Tags:
+    - KeyName: Name
+      Value: SomethingGenerated
+VpcSettings:
+  AvailabilityZones:
+    - eu-west-1a
+    - eu-west-2b
+    - eu-west-3c
+  PublicVpc: True
+  UseCloudMap: True
+  DhcpOptions:
+    DomainName: domain.local
+SubnetsLayers:
+  - Name: Public
+    Properties:
+      PublicIngress: True
+      PublicEgress: True
+      AvailabilityZones:
+        - eu-west-1a
+        - eu-west-1b
+        - eu-west-1c
+        OnePerAzOnly: True
+  - Name: Application
+    Properties:
+      PublicIngress: False
+      PublicEgress: True
+      AvailabilityZones:
+        - eu-west-1a
+        - eu-west-1b
+        - eu-west-1c
+      OnePerAzOnly: False
+  - Name: Storage
+    Properties:
+      PublicEgress: False
+      PublicIngress: False
+      AvailabilityZones:
+        - eu-west-1a
+        - eu-west-1b
+        - eu-west-1c
+      OnePerAzOnly: True
